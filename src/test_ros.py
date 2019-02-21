@@ -44,17 +44,17 @@ class image_converter:
     default_tapis_low = [0,3,0]
     default_tapis_high = [152,247,255]
 
-    cv2.createTrackbar('H_low', 'camera', default_tapis_low[0], 179, nothing)
-    cv2.createTrackbar('S_low', 'camera', default_tapis_low[1], 255, nothing)
-    cv2.createTrackbar('V_low', 'camera', default_tapis_low[2], 255, nothing)
+    #cv2.createTrackbar('H_low', 'camera', default_tapis_low[0], 179, nothing)
+    #cv2.createTrackbar('S_low', 'camera', default_tapis_low[1], 255, nothing)
+    #cv2.createTrackbar('V_low', 'camera', default_tapis_low[2], 255, nothing)#
 
-    cv2.createTrackbar('H_high', 'camera', default_tapis_high[0], 179, nothing)
-    cv2.createTrackbar('S_high', 'camera', default_tapis_high[1], 255, nothing)
-    cv2.createTrackbar('V_high', 'camera', default_tapis_high[2], 255, nothing)
+    #cv2.createTrackbar('H_high', 'camera', default_tapis_high[0], 179, nothing)
+    #cv2.createTrackbar('S_high', 'camera', default_tapis_high[1], 255, nothing)
+    #cv2.createTrackbar('V_high', 'camera', default_tapis_high[2], 255, nothing)
 
     # create switch for ON/OFF functionality
     self.switch = '0 : OFF \n1 : ON'
-    cv2.createTrackbar(self.switch, 'camera', 0, 1, nothing)
+    #cv2.createTrackbar(self.switch, 'camera', 0, 1, nothing)
 
     self.first = True
     #switch = '0 : OFF \n1 : ON'
@@ -194,12 +194,12 @@ class image_converter:
     cv_image = cv2.filter2D(cv_image, -1, self.blur)
 
     # get info from track bar and appy to result
-    h_low = cv2.getTrackbarPos('H_low', 'camera')
-    s_low = cv2.getTrackbarPos('S_low', 'camera')
-    v_low = cv2.getTrackbarPos('V_low', 'camera')
-    h_high = cv2.getTrackbarPos('H_high', 'camera')
-    s_high = cv2.getTrackbarPos('S_high', 'camera')
-    v_high = cv2.getTrackbarPos('V_high', 'camera')
+    #h_low = cv2.getTrackbarPos('H_low', 'camera')
+    #s_low = cv2.getTrackbarPos('S_low', 'camera')
+    #v_low = cv2.getTrackbarPos('V_low', 'camera')
+    #h_high = cv2.getTrackbarPos('H_high', 'camera')
+    #s_high = cv2.getTrackbarPos('S_high', 'camera')
+    #v_high = cv2.getTrackbarPos('V_high', 'camera')
 
     lower_green = np.array([h_low, s_low, v_low])
     upper_green = np.array([h_high, s_high, v_high])

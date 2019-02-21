@@ -12,6 +12,11 @@ find_package(catkin REQUIRED COMPONENTS
   image_transport
   std_msgs
 )
+#add dynamic reconfigure api
+find_package(catkin REQUIRED dynamic_reconfigure)
+generate_dynamic_reconfigure_options(
+  cfg/object_extraction.cfg
+)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -111,6 +116,8 @@ include_directories(
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
 # add_dependencies(buoy_node buoy_generate_messages_cpp)
+#add_dependencies(test_ros_opencv ${PROJECT_NAME}_gencfg)
+
 
 ## Specify libraries to link a library or executable target against
 # target_link_libraries(buoy_node
@@ -162,17 +169,17 @@ include_directories(
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()
 
-add_executable(test_opencv src/test_opencv.cpp)
-add_executable(face_detection src/face_detection.cpp)
-add_executable(background_substraction src/background_substraction.cpp)
+#add_executable(test_opencv src/test_opencv.cpp)
+#add_executable(face_detection src/face_detection.cpp)
+#add_executable(background_substraction src/background_substraction.cpp)
 # add_executable(color_removal src/color_removal.cpp)
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
 find_package(OpenCV)
 include_directories(${OpenCV_INCLUDE_DIRS})
-target_link_libraries(test_opencv ${OpenCV_LIBRARIES})
-target_link_libraries(face_detection ${OpenCV_LIBRARIES})
-target_link_libraries(background_substraction ${OpenCV_LIBRARIES})
+#target_link_libraries(test_opencv ${OpenCV_LIBRARIES})
+#target_link_libraries(face_detection ${OpenCV_LIBRARIES})
+#target_link_libraries(background_substraction ${OpenCV_LIBRARIES})
 #target_link_libraries(color_removal ${OpenCV_LIBRARIES})
 
