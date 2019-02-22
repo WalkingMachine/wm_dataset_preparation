@@ -13,6 +13,8 @@ The main steps to produce a dataset will be :
  3. YOLO file generation
      1. All the picture and the bounding box files will be generate according to the YOLO folder scheme
      2. The configuration file will also be generate
+     
+![](wm_data_preparation.png)
 
 ## Instructions
 ### Capture the object
