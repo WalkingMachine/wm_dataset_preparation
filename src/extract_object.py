@@ -34,68 +34,73 @@ class image_converter:
     self.counter = 0
     self.save = True
 
+  # Callback pour configurer l'interval HSV
   def srv_callback(self, config, level):
     self.tapis_low = np.array([config["H_low"],config["S_low"],config["V_low"]])
     self.tapis_high = np.array([config["H_high"],config["S_high"],config["V_high"]])
     return config
 
+  # Fonction pour enregistrer l'image actuelle avec le fond extrait
+  # TODO: utiliser un chemin relatif
   def save_image(self,data):
-    #self.save = True
     img_dir = os.listdir("/home/jeffrey/dataset_ws/src/wm_dataset_preparation/images/transparent/")
     for i in range(0,int(data.data)):
         time.sleep(1)
         copyfile("/home/jeffrey/dataset_ws/src/wm_dataset_preparation/result.png", "/home/jeffrey/dataset_ws/src/wm_dataset_preparation/images/transparent/result"+str(i+len(img_dir))+".png")
 
+  # Callback de l'image de la caméra
   def callback(self,data):
+    # Passer les premières images sinon il y a un problème avec les couleurs
     if self.counter < 10:
       self.counter += 1
     else:
       try:
+        # Conversion vers bgr8
         cv_image = self.bridge.imgmsg_to_cv2(data, "bgr8")
       except CvBridgeError as e:
         print(e)
 
       if self.first:
+          # Sélection de la région d'intérêt
           self.r = cv2.selectROI(cv_image)
           self.first = False
-
+          
+      # Découpe de l'image selon la région d'intért
       cv_image = cv_image[int(self.r[1]):int(self.r[1] + self.r[3]), int(self.r[0]):int(self.r[0] + self.r[2])]
 
-      # BACKGROUND SUBSTRACTION
+      # Substraction du fond de couleur
       output= cv_image
       output_no_contour = cv_image.copy()
       cv_image = cv2.filter2D(cv_image,-1,self.blur)
 
-      # CONVERT TO HSV
+      # Conversion vers HSV
       hsv = cv2.cvtColor(cv_image, cv2.COLOR_BGR2HSV)
-      # BLUR TO GET RID OF NOISE
+      # Blur pour enlever du bruit
       cv_image = cv2.filter2D(cv_image, -1, self.blur)
-
+      
+      # Appliquer le masque HSV
       mask = cv2.inRange(hsv, self.tapis_low, self.tapis_high)
-      mask2 = mask
-      #mask = cv2.medianBlur(mask, 5)
-      #mask = cv2.medianBlur(mask, 5)
-      mask3 = mask
+      mask2 = mask # Sauvegarde du masque pour visualisation seulement
+      mask3 = mask 
+      # Inversion du masque binaire
       mask3 = cv2.bitwise_not(mask3)
       invert = mask3
-
-      #lower_green = np.array([70, 50, 50])
-      #upper_green = np.array([85, 255, 255])
+      
+      # Algorithme de recherche de contours
       im2, contours, hierarchy = cv2.findContours(mask3, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
+      # Si un contour est trouvé
       if len(contours) != 0:
-          # draw in blue the contours that were founded
-          #cv2.drawContours(output, contours, -1, 255, 3)
 
-          # find the biggest area
+          # Trouver le plus gros contour de la liste
           c = max(contours, key=cv2.contourArea)
           cv2.drawContours(output, c, -1, 255, 3)
           x, y, w, h = cv2.boundingRect(c)
-          # draw the book contour (in green)
+          
+          # Dessiner le rectangle identifiant l'objet
           cv2.rectangle(output, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
           inverted_image = invert[y:y+h, x:x+w]
-
           out_crop = output_no_contour[y:y+h, x:x+w]
           out_crop = cv2.cvtColor(out_crop, cv2.COLOR_RGB2RGBA)
 
@@ -103,6 +108,8 @@ class image_converter:
             for elem in range(0, len(inverted_image[0])):
               if inverted_image[line,elem] != 255:
                 out_crop[line,elem] = 0
+                
+          # Enregistrer dans un fichier temporaire
           cv2.imwrite("/home/jeffrey/dataset_ws/src/wm_dataset_preparation/result.png", out_crop)
           cv2.imshow("invert_crop", invert[y:y+h, x:x+w])
           cv2.imshow("output_crop", out_crop)
@@ -110,6 +117,7 @@ class image_converter:
       cv2.waitKey(3)
 
       try:
+        # Envoie de l'image sur un topic ROS pour visualisation
         self.image_pub.publish(self.bridge.cv2_to_imgmsg(output, "bgr8"))
       except CvBridgeError as e:
         print(e)
