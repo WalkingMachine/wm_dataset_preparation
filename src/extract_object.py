@@ -1,4 +1,10 @@
 #!/usr/bin/env python
+
+# Author        : Jeffrey Cousineau
+# Date          : 11 août 2019
+# Description   : Script principal permettant la sélection de la région d'intérêt,
+#                 l'extraction du fond de couleur et l'enregistrement des images.
+
 from __future__ import print_function
 
 import roslib
