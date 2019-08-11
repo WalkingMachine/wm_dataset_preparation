@@ -107,28 +107,6 @@ class image_converter:
           cv2.imshow("invert_crop", invert[y:y+h, x:x+w])
           cv2.imshow("output_crop", out_crop)
 
-          #if self.save:
-            #inverted_image = invert[y:y+h, x:x+w]
-
-            
-            #out_image = output[y:y+h, x:x+w]
-            #out_image = cv2.cvtColor(out_image, cv2.COLOR_RGB2RGBA)
-            #for line in range(0, len(inverted_image)):
-            #  for elem in range(0, len(inverted_image[0])):
-            #    if inverted_image[line,elem] != 255:
-            #      out_image[line,elem] = 0
-            #cv2.imwrite("result.png", out_crop)
-            #self.save = False
-
-      
-      
-      #  *_, alpha = cv2.split(src)
-      #  gray_layer = cv2.cvtColor(src, cv2.COLOR_BGR2GRAY)
-      #  dst = cv2.merge((gray_layer, gray_layer, gray_layer, alpha))
-      #  cv2.imwrite("result.png", dst)
-
-      #cv2.imshow("Image window", output)
-      #cv2.imshow("Image window", output)
       cv2.waitKey(3)
 
       try:
