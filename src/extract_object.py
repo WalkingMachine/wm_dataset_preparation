@@ -7,12 +7,15 @@ import sys
 import rospy
 import cv2
 import numpy as np
+import os
 from std_msgs.msg import String
-from std_msgs.msg import Bool
+from std_msgs.msg import Bool, Int32
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
 from dynamic_reconfigure.server import Server
 from wm_dataset_preparation.cfg import object_extractionConfig
+from shutil import copyfile
+import time
 
 class image_converter:
 
@@ -20,16 +23,16 @@ class image_converter:
     self.image_pub = rospy.Publisher("image_topic_2",Image)
     self.srv = Server(object_extractionConfig, self.srv_callback)
     self.bridge = CvBridge()
-    self.save_image_sub = rospy.Subscriber("/dataset/save_image",Bool,self.save_image)
+    self.save_image_sub = rospy.Subscriber("/dataset/save_image",Int32,self.save_image)
 
-    self.image_sub = rospy.Subscriber("/camera/rgb/image_raw",Image,self.callback)
+    self.image_sub = rospy.Subscriber("/camera/rgb/image_raw/slow",Image,self.callback)
     self.fgbg = cv2.createBackgroundSubtractorMOG2()
     self.blur = np.ones((5, 5), np.float32) / 25
     self.tapis_low = np.array([0,3,0])
     self.tapis_high = np.array([152,247,255])
     self.first = True
     self.counter = 0
-    self.save = False
+    self.save = True
 
   def srv_callback(self, config, level):
     self.tapis_low = np.array([config["H_low"],config["S_low"],config["V_low"]])
@@ -37,7 +40,11 @@ class image_converter:
     return config
 
   def save_image(self,data):
-    self.save = True
+    #self.save = True
+    img_dir = os.listdir("/home/jeffrey/dataset_ws/src/wm_dataset_preparation/images/transparent/")
+    for i in range(0,int(data.data)):
+        time.sleep(1)
+        copyfile("/home/jeffrey/dataset_ws/src/wm_dataset_preparation/result.png", "/home/jeffrey/dataset_ws/src/wm_dataset_preparation/images/transparent/result"+str(i+len(img_dir))+".png")
 
   def callback(self,data):
     if self.counter < 10:
@@ -72,8 +79,6 @@ class image_converter:
       mask3 = cv2.bitwise_not(mask3)
       invert = mask3
 
-
-
       #lower_green = np.array([70, 50, 50])
       #upper_green = np.array([85, 255, 255])
       im2, contours, hierarchy = cv2.findContours(mask3, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -98,11 +103,11 @@ class image_converter:
             for elem in range(0, len(inverted_image[0])):
               if inverted_image[line,elem] != 255:
                 out_crop[line,elem] = 0
-          cv2.imwrite("result.png", out_crop)
+          cv2.imwrite("/home/jeffrey/dataset_ws/src/wm_dataset_preparation/result.png", out_crop)
           cv2.imshow("invert_crop", invert[y:y+h, x:x+w])
           cv2.imshow("output_crop", out_crop)
 
-          if self.save:
+          #if self.save:
             #inverted_image = invert[y:y+h, x:x+w]
 
             
@@ -112,8 +117,8 @@ class image_converter:
             #  for elem in range(0, len(inverted_image[0])):
             #    if inverted_image[line,elem] != 255:
             #      out_image[line,elem] = 0
-            cv2.imwrite("result.png", out_crop)
-            self.save = False
+            #cv2.imwrite("result.png", out_crop)
+            #self.save = False
 
       
       
