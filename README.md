@@ -1,3 +1,4 @@
+## [Rapport de projet (GPA791)](https://github.com/WalkingMachine/wm_dataset_preparation/blob/feature/Robocup2019/GPA791%20-%20Rapport%20final%20-%20Jeffrey%20Cousineau.pdf)
 # wm_dataset_preparation
 This ROS package let you easily prepare a custom dataset for YOLO. 
 This will automate the object bounding box selection by removing the background.
